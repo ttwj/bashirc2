@@ -1,5 +1,1 @@
-case "$1" in
-   "chanmsg" ) echo "gay";;
-esac
-
-echo ${1,,}
+ASSOC=([Hello]="second element" ["Peter Pan"]="A weird guy" [First]="first element" )
