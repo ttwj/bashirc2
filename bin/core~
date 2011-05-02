@@ -1,0 +1,26 @@
+#!/bin/bash
+#Core connection to IRC
+#Thanks to shellbot.sh by Sean B. Palmer, inamidst.com
+server=$1
+port=$2
+args=$3
+if [ "$ssl" = "ssl" ]; then
+command="socat - OPENSSL:"$server":"$port",verify=0"
+elif [ "$ssl" = "netcat" ]; then
+command="nc $server $port"
+else
+command="telnet $server $port"
+fi
+input=connections/$1.input
+input=derp.input
+echo "" > $input
+echo "NICK lolbot" >> $input
+echo "USER $(whoami) +iw ttwj :$0" >> $input
+
+tail -f "$input" | $command | \
+while true
+do read LINE || break
+   echo "$LINE"
+
+done
+

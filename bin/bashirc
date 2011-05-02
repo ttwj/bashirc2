@@ -1,0 +1,78 @@
+#!/bin/bash
+#bashIRC version 0.3-3 by ttwj
+#Help on #bashirc on irc.ra1ndrop.net
+# Thanks to Sean B. Palmer, inamidst.com
+# This bot has been improved and tidied to SMACK SAKERA'S FACE
+cat motd
+#Set chmod
+chmod 775 bashirc
+chmod 775 botscript
+chmod 775 core
+if [ ! -e /tmp/.bashirc ]; then
+   mkdir /tmp/.bashirc
+fi
+source ../etc/bashIRC.conf
+if [ -e /tmp/.bashirc/con_join ]; then
+   rm /tmp/.bashirc/con_join
+fi
+if [ -e /tmp/.bashirc/con_identify ]; then
+   rm /tmp/.bashirc/con_identify
+fi
+
+#Real code comes here o:
+
+if [ -z "$me" ]; then
+   echo "Error: No nickname given for bot, check bashIRC.conf"
+   exit 1
+fi
+if [ -z "$user" ]; then
+   echo "Error: No username given for bot, check bashIRC.conf"
+   exit 1
+fi
+if [ -z "$server" ]; then
+   echo "Error: No server given for bot to connect, check bashIRC.conf"
+   exit 1
+fi
+no=0
+for i in $server; do
+   no=$((no+1))
+done
+if [ "$no" != "1" ]; then
+   echo "I see that you have more than one server specified in the config"
+   echo "Please choose which one would you like to connect to."
+   fail[0]="o.o"
+   no=1
+   for i in $server; do
+      fail+=("$i")
+      echo "$no -- $i"
+      no=$((no+1))
+   done
+   read -p "Number:  " no
+   if [ ! ${fail[$no]} ]; then
+      echo "Error, no such server exists"
+      exit
+   fi
+   server=${fail[$no]}
+   slap=$(echo -n "${fail[$no]}" | sed -e 's/\.//g')
+   slap="$slap".input
+else
+   slap=$(echo "$server" | sed -e 's/\.//g')
+   slap="$slap.input"
+fi
+for i in ${@}; do
+   if [ "$i" = "-d" ]; then
+      export bashirc_debug="1"
+      elif [ "$i" = "-nohup" ]; then
+      nohup="1"
+   fi
+done
+identified="no"
+echo "NICK $me" > $slap
+echo "USER $user +iw$bot $me :$0" >> $slap
+if [ "$nohup" = "1" ]; then
+   nohup ./core "$slap" "$server" "$port"&disown
+   echo "Bot runned sucessfully"
+   exit 1
+else
+   bash core "$slap" "$server" "$port"
+fi

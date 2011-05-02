@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#Core connection to IRC
+#Thanks to shellbot.sh by Sean B. Palmer, inamidst.com
+BASH_VERSION=$(bash --version | cut -d ' ' -f4 | sed -n 1p)
+if [ "${BASH_VERSION:0:1}" -lt 4 ]; then
+echo "Error: You need bash 4 or above to run bashirc"
+fi
+server=$1
+port=$2
+args=$3
+if [ "$ssl" = "ssl" ]; then
+   command="socat - OPENSSL:"$server":"$port",verify=0"
+   elif [ "$ssl" = "netcat" ]; then
+   command="nc $server $port"
+else
+   command="telnet $server $port"
+fi
+input=connections/$1.input
+input=derp.input
+echo "" > $input
+echo "NICK lolbot" >> $input
+echo "USER $(whoami) +iw ttwj :$0" >> $input
+function send() {
+ echo "${@}" >> $input
+}
+. include/libparse.sh
+tail -f "$input" | $command | \
+while true
+do read LINE || break
+# protect from the exploit that nukes bashIRC
+#from shellIRC by miyoko
+LINE=${LINE//\*/\\x2a}
+if [[ "$LINE" == PING* ]]; then
+send $(echo "$LINE" | sed -e 's/PING/PONG/')
+fi
+echo "$LINE"
+   
+done
