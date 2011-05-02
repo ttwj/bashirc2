@@ -1,1 +1,4 @@
-ASSOC=([Hello]="second element" ["Peter Pan"]="A weird guy" [First]="first element" )
+gay="function gay() { echo 'hmm';}"
+source <(echo $gay)
+declare -f gay 'echo "hmm";'
+gay

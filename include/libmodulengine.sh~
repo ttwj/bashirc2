@@ -45,15 +45,17 @@ function e.hook() {
    done
 }
 
+
+
 Modules.load() {
-   if [ ! "$modules" ]; then
-      modules=$(ls ../modules | grep '.sh')
-   fi
-   for module in $modules; do
-      function=$(../include/functiongrab.sh "../modules/$module")
-      #load teh code!
-      source <(echo $function)
-   done
-   modules=$(declare -F | grep -o '.*[module]' | wc -l)
-   echo "$modules modules loaded!"
+if [ ! "$modules" ]; then
+   modules=$(ls ../modules | grep '.sh')
+fi
+for module in $modules; do
+   function=$(../include/functiongrab.sh "../modules/$module")
+   #load teh code!
+   source <(echo $function)
+done
+modules=$(declare -F | grep -o '.*[module]' | wc -l)
+echo "$modules modules loaded!"
 }

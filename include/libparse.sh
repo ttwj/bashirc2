@@ -20,17 +20,16 @@ function get.Dest() {
    if [ ! "$(echo $dest | cut -d '#' -f1)" ]; then
       value 'dest_chan' 'true'
    else
-    value 'dest_chan' 'false'
+      value 'dest_chan' 'false'
+   fi
 }
 function get.Command() {
    cmd=$(echo "$LINE" | cut -d ' ' -f4)
    value 'command' "$cmd"
 }
-function get.Privmsg() {
-   if [ "$cmd" = "PRIVMSG" ]; then
-      if [[ "$LINE" =~ :(.*)' ':(.*) ]]; then
-         value 'text' "${BASH_REMATCH[2]}"
-      fi
+function get.Text() {
+   if [[ "$LINE" =~ :(.*)' ':(.*) ]]; then
+      value 'text' "${BASH_REMATCH[2]}"
    fi
+   
 }
-function get.
